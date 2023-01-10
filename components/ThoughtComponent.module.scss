@@ -1,0 +1,106 @@
+.wrapper {
+  position: absolute;
+  top: 0;
+  left: 0;
+  width: 100vw;
+  height: 100vh;  
+  display: flex;
+  align-items: center;
+  text-align: left;
+  font-size: 1rem;
+}
+
+.opaqueBackground {
+  background: black;
+  background-color: rgba(0,0,0,0.5);
+  //background-color: rgba(255,255,255,0.1);
+  color: white;
+  backdrop-filter: blur(9px);
+  box-shadow: black 0 0px 6px 0px;
+}
+
+.halfScreen {
+  opacity: 0;
+  width: 100%;
+  height: auto;
+  padding: 3rem;
+  margin-left: 4rem;
+  max-width: 24rem;
+  //max-height: 22rem;
+  display: flex;
+  justify-content: center;
+  align-items: left;
+  flex-direction: column;     
+}
+
+.paragraphsWrapper {
+  display: block;
+}
+
+.paragraphWrapper {
+  display: block;
+  position: relative;
+  width: 100%;
+  overflow: hidden;
+  height: auto;
+}
+
+.paragraphWrapper p {
+  width: 100%;
+  display: none;
+  opacity: 0;
+  letter-spacing: 0.2em;
+  font-size: 1rem;
+  line-height: 1.5em;
+  margin: 1em auto;
+  //text-transform: uppercase;
+  transition: opacity 250ms;
+}
+
+.paragraphWrapper p:hover {
+  opacity: 1!important;
+}
+
+.paragraphWrapper:first-child p {
+  margin-top: 0;
+}
+
+.paragraphWrapper:last-child p {
+  margin-bottom: 0;
+}
+
+.paragraphOverlay {
+  display: block;
+  position: absolute;
+  width: 50%;
+  height: 100%;
+  z-index: 300;
+  right: 0;
+  background: black;
+  animation: slideIn 300ms 10ms;  
+}
+
+
+
+
+
+
+@keyframes slideIn {
+  from {
+    width: 100%;
+  }
+
+  to {
+    width: 0%;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
