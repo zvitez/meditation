@@ -28,6 +28,7 @@
     "virtual-scroll": "^2.2.1"
   },
   "devDependencies": {
+    "next-optimized-images": "^2.6.2",
     "sass": "^1.57.1"
   }
 }

@@ -6,13 +6,12 @@ import { Client, APIErrorCode, LogLevel } from "@notionhq/client"
 import Utils from '../components/particles/utils.js';
 import Animator from '../components/particles/animationManager';
 import Thoughts from '../components/thoughtComponent';
+import Cursor from '../components/cursor/cursorComponent';
+import Playlist from '../components/playlist/playlistComponent';
 
-import VirtualScroll from 'virtual-scroll'
-import mountains from '../public/images/massimiliano-morosinotto-3i5PHVp1Fkw-unsplash.jpg'
-import image2 from '../public/images/massimiliano-morosinotto-T0AIx4PdjQM-unsplash.jpg'
-import image4 from '../public/images/KiZa19_amethyst_pyramid_c5c10360-c328-41ec-b2f8-fad7c7144dfe.png'
-import image3 from '../public/images/massimiliano-morosinotto-3-K-OU5GO8w-unsplash.jpg'
-import africa from '../public/images/cosmic-timetraveler--SFhuMwFClk-unsplash.jpg'
+import image1 from '../public/images/robin-schreiner.jpg'
+import image2 from '../public/images/jean-philippe.jpg'
+import image3 from '../public/images/zoltan-tasi.jpg'
 
 const inter = Inter({ subsets: ['latin'] })
 // use it like so
@@ -26,32 +25,8 @@ const database_id = process.env.NOTION_DATABASE_ID
 
 //export async function getServerSideProps(): Promise<{props: {todos: any}}> {
 export async function getServerSideProps() {  
-  const payload = {
-    path: `databases/${database_id}/query`,
-    method: 'POST',
-  }
-
-  const notionPayload = await notion.request(payload);
 
   let images = [
-    { 
-      src: image4.src,
-      scale: 1,
-      width: image4.width,
-      height: image4.height
-    },
-    { 
-      src: mountains.src,
-      scale: 0.5,
-      width: mountains.width,
-      height: mountains.height
-    },
-    { 
-      src: africa.src,
-      scale: 0.5,
-      width: africa.width,
-      height: africa.height
-    },
     { 
       src: image2.src,
       scale: 0.5,
@@ -66,50 +41,46 @@ export async function getServerSideProps() {
     },
   ]
 
-  let thoughts = notionPayload.results;
-  //console.log(thoughts);  
-  
-  let thoughtParagraphs = [];
+  let meditations = [
+    {
+      name: "Intuition Deep Knowing Relaxation Practice by Tracee Stanley",
+      src: "/meditations/Intuition Deep Knowing Relaxation Practice - Tracee Stanley.mp3"
+    },
+    {
+      name: "Mind Peaceful Mind Relaxation Practice by Tracee Stanley",
+      src: "/meditations/Mind Peaceful Mind Relaxation Practice - Tracee Stanley.mp3"
+    },
+    {
+      name: "Body Grounding Deep Relaxation Practice by Tracee Stanley",
+      src: "/meditations/Body Grounding Deep Relaxation Practice - Tracee Stanley.mp3"
+    },
+    {
+      name: "Bliss Divine Connection Practice by Tracee Stanley",
+      src: "/meditations/Bliss Divine Connection Practice - Tracee Stanley.mp3"
+    },
+    {
+      name: "Healing Your Inner Child by Rising Woman",
+      src: "/meditations/Healing Your Inner Child - Rising Woman.mp3"
+    },    
+  ]
 
-  await Promise.all(thoughts.map( async (thought) => {    
-    /*
-    let response = await notion.pages.retrieve({ page_id: thought.id });      
-    console.log(response);
-    response = await notion.pages.properties.retrieve({ page_id: thought.id, property_id: thought.properties.Name.id });
-    console.log("Name");      
-    console.log(response);      
-    console.log("Name content");      
-    */
-   let newThought = { name: thought.properties.Name.title[0].plain_text };
-   let paragraphs = [];
-
-    let response = await notion.blocks.children.list({
-      block_id: thought.id,
-      page_size: 50,
-    });
-    if (response != undefined) {
-      response.results.forEach( (paragraph) => {
-        let p = paragraph.paragraph;
-        if (p.rich_text && p.rich_text.length > 0) {
-          paragraphs.push(p.rich_text[0].plain_text);
-        }
-      })
-    }      
-
-    newThought.paragraphs = paragraphs;
-    thoughtParagraphs.push(newThought);    
-  }));    
+  let music = [
+    {
+      src: "/music/Serendipity - Ari Urban.mp3"
+    },
+  ]
 
   return Promise.resolve({
     props: {      
       images,
-      thoughtParagraphs
+      meditations,
+      music
     },
   });
 }
 
 
-export default function Home({ images, thoughtParagraphs }) {  
+export default function Home({ images, meditations, music }) {  
   const [currentImage, setCurrentImage] = useState(0);    
   const [alteredImages, setAlteredImages] = useState(images);
   const [imageContainers, setImageContainers] = useState([]);
@@ -117,31 +88,10 @@ export default function Home({ images, thoughtParagraphs }) {
   const currentInterval = useRef(null);  
   const transitionDuration = useRef(100);
   const totalDurationPerChunk = 16000;
+  const meditationAudio = useRef(null);
+  const musicAudio = useRef(null);
 
-  async function deleteTodoHandler(todoID) {
-    fetch('/api/dotodo', {
-      method: "POST",
-      body: JSON.stringify({todoID: todoID}),
-      headers: {
-        'Content-Type': 'application/json'
-      }
-    }).then(response => response.json().then(data => console.log(data)))
-
-    setTimeout(() => {
-      //setCurrentTodos( (prevTodos) => prevTodos.filter( (todo) => todo.id != todoID));
-    }, 5000);    
-  }
-
-  useEffect(() => {    
-    const scroller = new VirtualScroll()
-    scroller.on(event => {
-      let moveDistance = document.querySelector("#soundCloudContainer").clientHeight;       
-      if (event.deltaY > 0) {
-        moveDistance = 0;
-      } 
-      Animator.smoothTranslation("#soundCloudContainer", "", 0, "bottom", moveDistance*-1, 1000, "easeInOutQuart")
-    })
-    
+  useEffect(() => {        
     addEventListener("resize", (event) => {
       console.log("resizing");
       setAlteredImages(alteredImages.map( (image) => {      
@@ -152,67 +102,27 @@ export default function Home({ images, thoughtParagraphs }) {
         return image;
       })
     )});
+    
+    meditationAudio.current = new Audio(meditations[0].src);  
+    musicAudio.current = new Audio(music[0].src);      
+    musicAudio.current.volume = 0.15;
 
-    const $bigBall = document.querySelector('.cursor__ball--big');
-    const $smallBall = document.querySelector('.cursor__ball--small');
-    const $hoverables = document.querySelectorAll('.hoverable');
+    //changeSongButton.addEventListener("click", changeSong);  
+    function changeSong() {
+      if (currentSong === "mp3-1") {
+        currentSong = "mp3-2"
+      } else {
+        currentSong = "mp3-1"
+      }
 
-    // Listeners
-    document.body.addEventListener('mousemove', onMouseMove);
-    for (let i = 0; i < $hoverables.length; i++) {
-      $hoverables[i].addEventListener('mouseenter', onMouseHover);
-      $hoverables[i].addEventListener('mouseleave', onMouseHoverOut);
-    }
-
-    // Move the cursor
-    function onMouseMove(e) {
-      TweenMax.to($bigBall, .4, {
-        x: e.pageX - 15,
-        y: e.pageY - 15
-      })
-      TweenMax.to($smallBall, .1, {
-        x: e.pageX - 5,
-        y: e.pageY - 7
-      })
-    }
-
-    // Hover an element
-    function onMouseHover() {
-      TweenMax.to($bigBall, .3, {
-        scale: 4
-      })
-    }
-    function onMouseHoverOut() {
-      TweenMax.to($bigBall, .3, {
-        scale: 1
-      })
-    }
-
-    TweenMax.to($bigBall, .4, {
-      x: window.innerWidth/2,
-      y: window.innerHeight/2
-    })
-    TweenMax.to($smallBall, .1, {
-      x: window.innerWidth/2,
-      y: window.innerHeight/2
-    })
-
-    Animator.fadeIn(".cursor__ball", 1000, 2000);
-
-    onInactive(5000, function () {
-      console.log("inactive");
-      Animator.fadeOut(".cursor__ball", 1000, 0);
-    });
+      meditationAudio.current.src = "newsrc";
+      meditationAudio.current.addEventListener("canplaythrough", (event) => {
+        /* the audio is now playable; play it if permissions allow */
+        meditationAudio.current.play();
+      });
+    }  
+       
   }, []);
-
-function onInactive(ms, cb) {
-    var wait = setTimeout(cb, ms);
-    document.onmousemove = document.mousedown = document.mouseup = document.onkeydown = document.onkeyup = document.focus = function () {
-        clearTimeout(wait);
-        Animator.fadeIn(".cursor__ball", 1000, 0);
-        wait = setTimeout(cb, ms);
-    };
-}
 
   useEffect(() => {    
     Animator.fadeOutIn(".overlay", 3000, 3000, transitionDuration.current*1000)
@@ -267,15 +177,6 @@ function onInactive(ms, cb) {
     }))
   }, [alteredImages]);
 
-  useEffect(() => {
-    console.log("Done loading thoughts");
-    console.log(thoughtParagraphs);
-    transitionDuration.current = (totalDurationPerChunk/1000) * thoughtParagraphs[0].paragraphs.length/3;
-    console.log("Transition Duration");
-    console.log(transitionDuration.current);
-    setThoughts(thoughtParagraphs);
-  }, [thoughtParagraphs]);
-
   useEffect(() => {    
     let xChange = 100;
     let yChange = 100;   
@@ -291,8 +192,38 @@ function onInactive(ms, cb) {
 
 
   function clickHandler(e) {
-    clearInterval(currentInterval.current);
+    /*clearInterval(currentInterval.current);
     setCurrentImage((currentImage + 1) % alteredImages.length); 
+    */
+
+    if (meditationAudio.current.readyState === HTMLMediaElement.HAVE_FUTURE_DATA
+      || meditationAudio.current.readyState === HTMLMediaElement.HAVE_ENOUGH_DATA) {
+        meditationAudio.current.play();
+    } else {
+      meditationAudio.current.addEventListener("canplaythrough", (event) => {
+        /* the audio is now playable; play it if permissions allow */
+        meditationAudio.current.play();
+      });
+    }
+
+    meditationAudio.current.addEventListener("ended", (event) => {
+      /* the audio is now playable; play it if permissions allow */
+      meditationAudio.current.play();
+      musicAudio.current.pause();
+    });
+
+    if (musicAudio.current.readyState === HTMLMediaElement.HAVE_FUTURE_DATA
+      || musicAudio.current.readyState === HTMLMediaElement.HAVE_ENOUGH_DATA) {
+        musicAudio.current.play();
+        musicAudio.current.loop = true;
+    } else {
+      musicAudio.current.addEventListener("canplaythrough", (event) => {
+        /* the audio is now playable; play it if permissions allow */
+        musicAudio.current.play();
+        musicAudio.current.loop = true;
+      });
+    }
+    
     /*
     // fullscreen test
     const elem = document.querySelector(".main-image");      
@@ -305,37 +236,16 @@ function onInactive(ms, cb) {
   return (
     <>
       <Head>
-        <title>Something Beautiful</title>
+        <title>Meditation</title>
         <meta name="description" content="" />
         <meta name="viewport" content="width=device-width, initial-scale=1" />
         <link rel="icon" href="/favicon.ico" />
       </Head>
-      <div className="cursor">
-        <div className="cursor__ball cursor__ball--big ">
-          <svg height="30" width="30">
-            <circle cx="15" cy="15" r="12" strokeWidth="0"></circle>
-          </svg>
-        </div>
-        
-        <div className="cursor__ball cursor__ball--small">
-          <svg height="10" width="10">
-            <circle cx="5" cy="5" r="4" strokeWidth="0"></circle>
-          </svg>
-        </div>
-      </div>
-
+      <Cursor/>      
       <main id="main" onClick={clickHandler}>        
         {imageContainers[currentImage]}     
-        <Thoughts thoughts={thoughts} totalDurationPerChunk={totalDurationPerChunk}/>     
-        <div id="soundCloudContainer">     
-        
-          <iframe width="100%" height="450" scrolling="no" frameBorder="no" allow="autoplay" src="https://w.soundcloud.com/player/?url=https%3A//api.soundcloud.com/playlists/508485912&color=%2354403c&auto_play=false&hide_related=false&show_comments=false&show_user=true&show_reposts=false&show_teaser=false"></iframe>     
-          
-        </div>
-        
-      </main>
-
-      <script src="https://cdnjs.cloudflare.com/ajax/libs/gsap/1.20.3/TweenMax.min.js"></script>
+        <Playlist list={meditations}/>
+      </main>      
     </>
   )
 }
