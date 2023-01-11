@@ -1,0 +1,58 @@
+.glightbox_video {
+  position: absolute;
+  top: 80%;
+  left: 50%;
+  opacity: 1;
+  animation: fadeIn 6s ease-in;
+  transform: translate(-50%, -50%);
+  background: none;
+  border: none;
+  cursor: none;
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0
+  }
+
+  80% {
+    opacity: 0;
+  }
+
+  to {
+    opacity: 1;
+  }
+}
+
+/* trying to disable outline on mobile when clicking
+.glightbox_video:active,
+.glightbox_video:focus-within,
+.glightbox_video:focus,
+.glightbox_video:focus-visible {
+  outline: none!important;
+  background: none!important;
+}
+*/
+
+.outer_circle {
+  stroke-width: 3;
+  stroke-dasharray: 410; 
+  stroke-dashoffset: 0;
+  stroke-linecap: square;
+  transition: all .4s ease-out;
+}
+
+.glightbox_video:hover .outer_circle {
+  stroke-dashoffset:410;
+  transition: stroke .7s .4s ease-out, stroke-dashoffset .4s ease-out
+}
+
+.glightbox_video:hover .inner_circle {
+  fill: #000000;
+  transition:fill .4s .3s ease-out;
+}
+
+.glightbox_video:hover .play {
+  fill: white;
+  transition:fill .4s .3s ease-out;
+}

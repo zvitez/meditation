@@ -101,24 +101,36 @@ let Animator = {
     })      
   },
 
-  animateImage: function(target, xChange, yChange) {
+  animateImage: function(target, xChange, yChange, goBackDelay) {
     Animator.init();
     setTimeout( function() {
       let keyFrames = [];
     
       for (let frame = 0; frame < 1; frame++) {
-        keyFrames.push({         
-          "background-position-x": `${xChange}%`,
-          "background-position-y": `${yChange}%`,
-          duration: 1000,
-          easing: "steps(1)",
-        })
+        keyFrames.push(
+          {         
+            "background-position-x": `${xChange}%`,
+            "background-position-y": `${yChange}%`,
+            duration: 1000,
+            easing: "steps(1)",
+          }, 
+          {         
+            "background-position-x": "0%",
+            "background-position-y": "0%",
+            duration: 1000,
+            easing: "steps(1)",
+            delay: goBackDelay
+          }, 
+        )
       }
 
       anime({
         targets: target,
         keyframes: keyFrames,        
         easing: 'linear',
+        loop: true,
+        endDelay: 1000,
+        duration: goBackDelay + 2000,      
       })  
     }, 1000)    
   },

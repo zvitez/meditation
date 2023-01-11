@@ -5,6 +5,13 @@
 
 html {
   background: black;
+  font-size: 16px;
+}
+
+@media screen and (min-width: 1600px) {
+  html {
+    font-size: 24px;
+  }
 }
 
 * {
@@ -28,15 +35,6 @@ main {
   justify-content: center;
   align-items: center;
   flex-direction: column;
-}
-
-svg {
-  width: 90vmin;
-  height: 90vmin;
-}
-
-path {
-  cursor: pointer;
 }
 
 /*
@@ -202,4 +200,19 @@ scale: 0.5;
   0% {
     top: -50%; }
   100% {
-    top: 110%; } }
+    top: 110%; } 
+}
+
+@keyframes moveAround {
+  from {
+    background-position-x: 0%;
+    background-position-y: 0%;
+  }
+
+  to {
+    background-position-x: 100%;
+    background-position-y: 100%;
+  }
+}
+
+

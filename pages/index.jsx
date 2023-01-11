@@ -8,6 +8,7 @@ import Animator from '../components/particles/animationManager';
 import Thoughts from '../components/thoughtComponent';
 import Cursor from '../components/cursor/cursorComponent';
 import Playlist from '../components/playlist/playlistComponent';
+import PlayButton from '../components/play_button/playButtonComponent';
 
 import image1 from '../public/images/robin-schreiner.jpg'
 import image2 from '../public/images/jean-philippe.jpg'
@@ -29,13 +30,13 @@ export async function getServerSideProps() {
   let images = [
     { 
       src: image2.src,
-      scale: 0.5,
+      scale: 0.25,
       width: image2.width,
       height: image2.height
     },
     { 
       src: image3.src,
-      scale: 0.5,
+      scale: 0.25,
       width: image3.width,
       height: image3.height
     },
@@ -61,12 +62,12 @@ export async function getServerSideProps() {
     {
       name: "Healing Your Inner Child by Rising Woman",
       src: "/meditations/Healing Your Inner Child - Rising Woman.mp3"
-    },    
+    },
   ]
 
   let music = [
     {
-      src: "/music/Serendipity - Ari Urban.mp3"
+      src: "/music/Serendipity - Ari Urban - quiet.mp3"
     },
   ]
 
@@ -90,10 +91,11 @@ export default function Home({ images, meditations, music }) {
   const totalDurationPerChunk = 16000;
   const meditationAudio = useRef(null);
   const musicAudio = useRef(null);
+  const nextMeditation = useRef();
+  const playing = useRef(false);
 
   useEffect(() => {        
     addEventListener("resize", (event) => {
-      console.log("resizing");
       setAlteredImages(alteredImages.map( (image) => {      
         if (image.width*image.scale <= window.innerWidth || image.height*image.scale <= window.innerHeight)
           image.backgroundSize = "cover";
@@ -104,28 +106,12 @@ export default function Home({ images, meditations, music }) {
     )});
     
     meditationAudio.current = new Audio(meditations[0].src);  
-    musicAudio.current = new Audio(music[0].src);      
-    musicAudio.current.volume = 0.15;
-
-    //changeSongButton.addEventListener("click", changeSong);  
-    function changeSong() {
-      if (currentSong === "mp3-1") {
-        currentSong = "mp3-2"
-      } else {
-        currentSong = "mp3-1"
-      }
-
-      meditationAudio.current.src = "newsrc";
-      meditationAudio.current.addEventListener("canplaythrough", (event) => {
-        /* the audio is now playable; play it if permissions allow */
-        meditationAudio.current.play();
-      });
-    }  
+    musicAudio.current = new Audio(music[0].src);          
        
   }, []);
 
   useEffect(() => {    
-    Animator.fadeOutIn(".overlay", 3000, 3000, transitionDuration.current*1000)
+    Animator.fadeOut(".overlay", 3000, 3000, transitionDuration.current*1000)
   }, [imageContainers])
 
   useEffect(() => {
@@ -160,7 +146,13 @@ export default function Home({ images, meditations, music }) {
               scale: "" + image.scale, 
               height: Math.max(100/image.scale, 100) + "vh",
               width: Math.max(100/image.scale, 100) + "vw",
-              transition: `background-position ${transitionDuration.current}s ease`,
+              //transition: `background-position ${transitionDuration.current}s ease`,
+              animationDuration: `${transitionDuration.current}s`,
+              animationName: "moveAround",
+              animationIterationCount: "infinite",
+              animationDirection: "alternate",
+              animationTimingFunction: "easeInOut",
+              animationDelay: "1s",
               top: top,
               backgroundSize: image.backgroundSize,
               left: left,              
@@ -181,48 +173,98 @@ export default function Home({ images, meditations, music }) {
     let xChange = 100;
     let yChange = 100;   
 
-    Animator.animateImage(".main-image", xChange, yChange);
+    let interval = setTimeout(() => {
+      let image = document.querySelector(".main-image");
+      image.style.backgroundPositionX = "100%";
+      image.style.backgroundPositionY = "100%";
+    }, 3000);
+    /*
+    Animator.animateImage(".main-image", xChange, yChange, transitionDuration.current*1000);    
     Animator.fadeOutIn(".overlay", 3000, 3000, transitionDuration.current*1000)
     let interval = setInterval(() => {
       setCurrentImage((currentImage + 1) % alteredImages.length);      
     }, transitionDuration.current*1000);  // Change image every 2 seconds
     currentInterval.current = interval;
     return () => clearInterval(interval);
+    */
+    return () => clearInterval(interval);
   }, [currentImage]); // end useEffect
 
+  function setNewMeditation(next) {
+    nextMeditation.current = next;
+    playing.current = false;
+  }
+
+  function playMeditationHandler() {
+    if (playing.current == true && meditationAudio.current.paused) {
+      meditationAudio.current.play();      
+      musicAudio.current.play();      
+      return;
+    } else if (playing.current == true){
+      meditationAudio.current.pause();      
+      musicAudio.current.pause();      
+      return;
+    }
+
+    meditationAudio.current.src = nextMeditation.current.src;  
+    musicAudio.current.src = music[0].src;      
+    
+    setTimeout(() => {
+      meditationAudio.current.play();      
+      musicAudio.current.play();      
+      musicAudio.current.loop = true;
+      playing.current = true;
+    }, 500)
+
+    
+    meditationAudio.current.addEventListener(["canplaythrough", "canplay"], (event) => {
+      /* the audio is now playable; play it if permissions allow 
+      meditationAudio.current.play();
+      */
+    });    
+
+    meditationAudio.current.addEventListener("ended", (event) => {
+      /* the audio is now playable; play it if permissions allow */
+      musicAudio.current.pause();
+    });
+
+    musicAudio.current.addEventListener("canplaythrough", (event) => {
+      /* the audio is now playable; play it if permissions allow 
+      musicAudio.current.play();
+      musicAudio.current.loop = true;
+      */
+    });
+  }
+
+  function changeMeditationHandler(nextMeditation) {    
+    return;
+    meditationAudio.current.src = nextMeditation.src;  
+    musicAudio.current.src = music[0].src;      
+
+    meditationAudio.current.addEventListener("canplaythrough", (event) => {
+      /* the audio is now playable; play it if permissions allow */
+      meditationAudio.current.play();
+    });    
+
+    meditationAudio.current.addEventListener("ended", (event) => {
+      /* the audio is now playable; play it if permissions allow */
+      musicAudio.current.pause();
+    });
+
+    musicAudio.current.addEventListener("canplaythrough", (event) => {
+      /* the audio is now playable; play it if permissions allow */
+      musicAudio.current.play();
+      musicAudio.current.loop = true;
+    });
+
+  }
 
   function clickHandler(e) {
     /*clearInterval(currentInterval.current);
     setCurrentImage((currentImage + 1) % alteredImages.length); 
     */
 
-    if (meditationAudio.current.readyState === HTMLMediaElement.HAVE_FUTURE_DATA
-      || meditationAudio.current.readyState === HTMLMediaElement.HAVE_ENOUGH_DATA) {
-        meditationAudio.current.play();
-    } else {
-      meditationAudio.current.addEventListener("canplaythrough", (event) => {
-        /* the audio is now playable; play it if permissions allow */
-        meditationAudio.current.play();
-      });
-    }
-
-    meditationAudio.current.addEventListener("ended", (event) => {
-      /* the audio is now playable; play it if permissions allow */
-      meditationAudio.current.play();
-      musicAudio.current.pause();
-    });
-
-    if (musicAudio.current.readyState === HTMLMediaElement.HAVE_FUTURE_DATA
-      || musicAudio.current.readyState === HTMLMediaElement.HAVE_ENOUGH_DATA) {
-        musicAudio.current.play();
-        musicAudio.current.loop = true;
-    } else {
-      musicAudio.current.addEventListener("canplaythrough", (event) => {
-        /* the audio is now playable; play it if permissions allow */
-        musicAudio.current.play();
-        musicAudio.current.loop = true;
-      });
-    }
+    
     
     /*
     // fullscreen test
@@ -244,7 +286,8 @@ export default function Home({ images, meditations, music }) {
       <Cursor/>      
       <main id="main" onClick={clickHandler}>        
         {imageContainers[currentImage]}     
-        <Playlist list={meditations}/>
+        <Playlist setNewMeditation={setNewMeditation} changeMeditationHandler={changeMeditationHandler} list={meditations}/>
+        <PlayButton clickHandler={playMeditationHandler} />
       </main>      
     </>
   )
