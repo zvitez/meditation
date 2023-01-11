@@ -109,7 +109,7 @@ const Playlist = ( { list, changeMeditationHandler, setNewMeditation } ) => {
       */
       let centerId = Math.floor(maxItems/2);      
       //e.style.top = topPosition + newIndex * maxHeight + "px";
-      let duration = 250;
+      let duration = 350;
       let easing = "easeInOutQuad";
       if (newIndex == centerId) {
         
@@ -120,6 +120,7 @@ const Playlist = ( { list, changeMeditationHandler, setNewMeditation } ) => {
           keyframes: [
             { 
               opacity: 1,
+              scale: 1,
               top: newIndex * maxHeight + "px",
               duration: duration,
             }
@@ -132,6 +133,7 @@ const Playlist = ( { list, changeMeditationHandler, setNewMeditation } ) => {
           keyframes: [
             { 
               opacity: 0,
+              scale: 0.7,
               top: wrapperHeight + "px",
               duration: duration/2,
             },
@@ -141,6 +143,7 @@ const Playlist = ( { list, changeMeditationHandler, setNewMeditation } ) => {
             },
             { 
               opacity: 0.25,
+              scale: 0.8,
               top: 0 + "px",
               duration: duration/2,
             },
@@ -153,6 +156,7 @@ const Playlist = ( { list, changeMeditationHandler, setNewMeditation } ) => {
           keyframes: [
             { 
               opacity: 0,
+              scale: 0.7,
               top: 0 - maxHeight + "px",
               duration: duration/2,
             },
@@ -162,6 +166,7 @@ const Playlist = ( { list, changeMeditationHandler, setNewMeditation } ) => {
             },
             { 
               opacity: 0.25,
+              scale: 0.8,
               top: newIndex * maxHeight + "px",
               duration: duration/2,
             },
@@ -174,6 +179,7 @@ const Playlist = ( { list, changeMeditationHandler, setNewMeditation } ) => {
           keyframes: [
             { 
               opacity: 0.25,
+              scale: 0.8,
               top: newIndex * maxHeight + "px",
               duration: duration,
             }
@@ -186,6 +192,7 @@ const Playlist = ( { list, changeMeditationHandler, setNewMeditation } ) => {
           keyframes: [
             { 
               opacity: 0,
+              scale: 0.7,
               top: newIndex * maxHeight + "px",
               duration: duration,
             }
@@ -198,6 +205,7 @@ const Playlist = ( { list, changeMeditationHandler, setNewMeditation } ) => {
           keyframes: [
             { 
               opacity: 0.25,
+              scale: 0.8,
               top: newIndex * maxHeight + "px",
               duration: duration,
             }
@@ -210,6 +218,7 @@ const Playlist = ( { list, changeMeditationHandler, setNewMeditation } ) => {
           keyframes: [
             { 
               opacity: 0.5,
+              scale: 0.9,
               top: newIndex * maxHeight + "px",
               duration: duration,
             }
@@ -223,6 +232,18 @@ const Playlist = ( { list, changeMeditationHandler, setNewMeditation } ) => {
   useEffect( () => {
     
   }, [currentList] )
+
+  useEffect(() => {        
+    addEventListener("resize", (event) => {
+     
+      let maxHeight = calculateMaxHeight();
+      maxNumItems.current = calculateMaxNumberOfItems(maxHeight);    
+      centerElementIndex.current = Math.floor(maxNumItems.current / 2);
+      setNumItems(maxNumItems.current);    
+      positionElements(maxNumItems.current, maxHeight);
+    });      
+       
+  }, []);
 
   useEffect(() => {
     scroller.current = new VirtualScroll();
@@ -244,7 +265,7 @@ const Playlist = ( { list, changeMeditationHandler, setNewMeditation } ) => {
 
           return (
             <div onClick={() => changeMeditationHandler(item)} key={item.name} className={cx("hoverableIsntWorkingAtm", styles.element)}>
-              <p>{item.name}</p>
+              <p>{item.name} {item.guide && item.guide != "" && <em>by {item.guide}</em>}</p>
             </div>
           )
         }) 

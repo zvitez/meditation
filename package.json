@@ -6,6 +6,7 @@
     "dev": "node dev-server.js",
     "build": "next build",
     "start": "node prod-server.js",
+    "startProd": "export PORT=9007 && next start",
     "lint": "next lint"
   },
   "dependencies": {

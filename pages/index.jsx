@@ -5,7 +5,6 @@ import { useState, useEffect, useRef } from 'react'
 import { Client, APIErrorCode, LogLevel } from "@notionhq/client"
 import Utils from '../components/particles/utils.js';
 import Animator from '../components/particles/animationManager';
-import Thoughts from '../components/thoughtComponent';
 import Cursor from '../components/cursor/cursorComponent';
 import Playlist from '../components/playlist/playlistComponent';
 import PlayButton from '../components/play_button/playButtonComponent';
@@ -44,23 +43,28 @@ export async function getServerSideProps() {
 
   let meditations = [
     {
-      name: "Intuition Deep Knowing Relaxation Practice by Tracee Stanley",
+      name: "Intuition deep knowing relaxation practice",
+      guide: "Tracee Stanley",
       src: "/meditations/Intuition Deep Knowing Relaxation Practice - Tracee Stanley.mp3"
     },
     {
-      name: "Mind Peaceful Mind Relaxation Practice by Tracee Stanley",
+      name: "Mind peaceful mind relaxation practice",
+      guide: "Tracee Stanley",
       src: "/meditations/Mind Peaceful Mind Relaxation Practice - Tracee Stanley.mp3"
     },
     {
-      name: "Body Grounding Deep Relaxation Practice by Tracee Stanley",
+      name: "Body grounding deep relaxation practice",
+      guide: "Tracee Stanley",
       src: "/meditations/Body Grounding Deep Relaxation Practice - Tracee Stanley.mp3"
     },
     {
-      name: "Bliss Divine Connection Practice by Tracee Stanley",
+      name: "Bliss divine connection practice",
+      guide: "Tracee Stanley",
       src: "/meditations/Bliss Divine Connection Practice - Tracee Stanley.mp3"
     },
     {
-      name: "Healing Your Inner Child by Rising Woman",
+      name: "Healing your inner child",
+      guide: "Rising Woman",
       src: "/meditations/Healing Your Inner Child - Rising Woman.mp3"
     },
   ]
@@ -84,10 +88,9 @@ export async function getServerSideProps() {
 export default function Home({ images, meditations, music }) {  
   const [currentImage, setCurrentImage] = useState(0);    
   const [alteredImages, setAlteredImages] = useState(images);
-  const [imageContainers, setImageContainers] = useState([]);
-  const [thoughts, setThoughts] = useState([]);
+  const [imageContainers, setImageContainers] = useState([]);  
   const currentInterval = useRef(null);  
-  const transitionDuration = useRef(100);
+  const transitionDuration = useRef(40);
   const totalDurationPerChunk = 16000;
   const meditationAudio = useRef(null);
   const musicAudio = useRef(null);
@@ -147,6 +150,7 @@ export default function Home({ images, meditations, music }) {
               height: Math.max(100/image.scale, 100) + "vh",
               width: Math.max(100/image.scale, 100) + "vw",
               //transition: `background-position ${transitionDuration.current}s ease`,
+              backgroundPosition: "25% 25%",
               animationDuration: `${transitionDuration.current}s`,
               animationName: "moveAround",
               animationIterationCount: "infinite",
