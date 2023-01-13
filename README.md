@@ -1,3 +1,5 @@
+pm2 start npm --name "meditationprod" -- run start --watch
+
 # Todo
 
 ## get data about the song

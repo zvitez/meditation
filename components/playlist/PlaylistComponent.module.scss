@@ -7,9 +7,10 @@
   width: 22rem;
   height: 80vh;
   max-height: 20rem;
+  margin-top: -1em;
   overflow: hidden;
   text-align: center;
-  font-size: 1.2rem;
+  font-size: 1.5rem;
   letter-spacing: 0.1rem;
   color: #cd772d;
   font-weight: 900;
@@ -32,12 +33,18 @@
 
 .element {  
   display: flex;
+  flex-direction: column;
   align-items: center;
-  padding: 1em 0;
+  justify-content: center;
+  padding: 0.2em 0;
   width: 100%;
 }
 
-.element p em {
-  opacity: 0.5;
+.element em {
+  //opacity: 0.5;
+  font-size: 0.6em;
+  margin-bottom: -0.12em;
+  letter-spacing: 0;
+  color: #a59980;
 }
 

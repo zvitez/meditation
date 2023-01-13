@@ -7,6 +7,68 @@ let Animator = {
     anime.suspendWhenDocumentHidden = false; // default true
   },
 
+  unscale: function(target, duration, delay) {
+    if (target) 
+      anime({
+        targets: target,
+        keyframes: [
+          { 
+            scale: 1,
+            duration: duration,
+            delay: delay,
+          }          
+        ],    
+        easing: 'easeOutQuad',
+      })
+  },
+
+  scaleUp: function(target, duration, delay) {
+    if (target) 
+      anime({
+        targets: target,
+        keyframes: [
+          { 
+            scale: 1.2,
+            duration: duration,
+            delay: delay,
+          }          
+        ],    
+        easing: 'easeOutQuad',
+      })
+  },
+
+  unslide: function(target, duration, delay) {
+    if (target) 
+      anime({
+        targets: target,
+        keyframes: [
+          { 
+            translate: "0px 0em",
+            opacity: 1,
+            duration: duration,
+            delay: delay,
+          }          
+        ],    
+        easing: 'easeOutQuad',
+      })
+  },
+
+  slideDown: function(target, duration, delay) {
+    if (target) 
+      anime({
+        targets: target,
+        keyframes: [
+          { 
+            translate: "0px 5em",
+            opacity: 0,
+            duration: duration,
+            delay: delay,
+          }          
+        ],    
+        easing: 'easeInQuad',
+      })
+  },
+
   fadeOut: function(target, duration, fadeOutDelay) {           
     if (target) 
       anime({

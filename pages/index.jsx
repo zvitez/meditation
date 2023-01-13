@@ -48,7 +48,12 @@ export async function getServerSideProps() {
       src: "/meditations/Intuition Deep Knowing Relaxation Practice - Tracee Stanley.mp3"
     },
     {
-      name: "Mind peaceful mind relaxation practice",
+      name: "10 min meditation",
+      guide: "Marlene Zehnter",
+      src: "/meditations/10 min meditation by Marlene Zehnter.mp3"
+    },    
+    {
+      name: "Peaceful mind relaxation practice",
       guide: "Tracee Stanley",
       src: "/meditations/Mind Peaceful Mind Relaxation Practice - Tracee Stanley.mp3"
     },
@@ -71,6 +76,7 @@ export async function getServerSideProps() {
 
   let music = [
     {
+      //src: "/music/Low Tide Unguided Meditation Conor_1.2_Nrmlzd2_30mins_VBR5-quiet.mp3"
       src: "/music/Serendipity - Ari Urban - quiet.mp3"
     },
   ]
@@ -263,22 +269,6 @@ export default function Home({ images, meditations, music }) {
 
   }
 
-  function clickHandler(e) {
-    /*clearInterval(currentInterval.current);
-    setCurrentImage((currentImage + 1) % alteredImages.length); 
-    */
-
-    
-    
-    /*
-    // fullscreen test
-    const elem = document.querySelector(".main-image");      
-    if (elem.requestFullscreen) {
-      elem.requestFullscreen();
-    }
-    */
-  }  
-
   return (
     <>
       <Head>
@@ -288,8 +278,12 @@ export default function Home({ images, meditations, music }) {
         <link rel="icon" href="/favicon.ico" />
       </Head>
       <Cursor/>      
-      <main id="main" onClick={clickHandler}>        
+      <main id="main">        
         {imageContainers[currentImage]}     
+        <div className="backgroundWrapper">
+          <div className="darkBackground">
+          </div>
+        </div>
         <Playlist setNewMeditation={setNewMeditation} changeMeditationHandler={changeMeditationHandler} list={meditations}/>
         <PlayButton clickHandler={playMeditationHandler} />
       </main>      

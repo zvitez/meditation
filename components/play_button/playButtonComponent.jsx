@@ -8,7 +8,7 @@ import Animator from '../particles/animationManager'
 import anime from 'animejs';
 
 const PlayButton = ( { clickHandler } ) => {  
-
+ 
   return (
     <div onClick={clickHandler} className={styles.glightbox_video}> 
       <svg width="80" height="80" viewBox="0 0 131 131" fill="none" xmlns="http://www.w3.org/2000/svg">

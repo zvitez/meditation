@@ -18,8 +18,10 @@ const Playlist = ( { list, changeMeditationHandler, setNewMeditation } ) => {
   const maxNumItems = useRef(0);
   const scrolledUp = useRef(false);
   const scrolling = useRef(false);
+  const interval = useRef(null);
 
   function handleScroll(event) {
+
     if (scrolling.current) {
       return;
     }
@@ -265,7 +267,8 @@ const Playlist = ( { list, changeMeditationHandler, setNewMeditation } ) => {
 
           return (
             <div onClick={() => changeMeditationHandler(item)} key={item.name} className={cx("hoverableIsntWorkingAtm", styles.element)}>
-              <p>{item.name} {item.guide && item.guide != "" && <em>by {item.guide}</em>}</p>
+              {item.guide && item.guide != "" && <em>{item.guide}</em>}
+              <p>{item.name}</p>
             </div>
           )
         }) 
