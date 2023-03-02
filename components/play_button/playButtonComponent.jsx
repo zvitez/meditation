@@ -1,11 +1,5 @@
 import { useState, useEffect, useRef } from 'react'
-import cx from 'classnames'
-
-import VirtualScroll from 'virtual-scroll'
-
 import styles from './playButtonComponent.module.scss'
-import Animator from '../particles/animationManager'
-import anime from 'animejs';
 
 const PlayButton = ( { clickHandler } ) => {  
  

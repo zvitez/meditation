@@ -2,9 +2,8 @@ import Head from 'next/head'
 import Image from 'next/image'
 import { Inter } from '@next/font/google'
 import { useState, useEffect, useRef } from 'react'
-import { Client, APIErrorCode, LogLevel } from "@notionhq/client"
-import Utils from '../components/particles/utils.js';
-import Animator from '../components/particles/animationManager';
+import Utils from '../components/animation/utils.js';
+import Animator from '../components/animation/animationManager';
 import Cursor from '../components/cursor/cursorComponent';
 import Playlist from '../components/playlist/playlistComponent';
 import PlayButton from '../components/play_button/playButtonComponent';
@@ -14,16 +13,7 @@ import image2 from '../public/images/jean-philippe.jpg'
 import image3 from '../public/images/zoltan-tasi.jpg'
 
 const inter = Inter({ subsets: ['latin'] })
-// use it like so
-// <h2 className={inter.className}>
 
-const notion = new Client({
-  auth: process.env.NOTION_TOKEN,
-})
-
-const database_id = process.env.NOTION_DATABASE_ID
-
-//export async function getServerSideProps(): Promise<{props: {todos: any}}> {
 export async function getServerSideProps() {  
 
   let images = [
@@ -52,11 +42,6 @@ export async function getServerSideProps() {
       guide: "Marlene Zehnter",
       src: "/meditations/10 min meditation by Marlene Zehnter.mp3"
     },    
-    {
-      name: "Peaceful mind relaxation practice",
-      guide: "Tracee Stanley",
-      src: "/meditations/Mind Peaceful Mind Relaxation Practice - Tracee Stanley.mp3"
-    },
     {
       name: "Body grounding deep relaxation practice",
       guide: "Tracee Stanley",

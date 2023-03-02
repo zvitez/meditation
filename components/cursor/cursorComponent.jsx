@@ -2,7 +2,7 @@ import { useState, useEffect, useRef } from 'react'
 import cx from 'classnames'
 
 import styles from './CursorComponent.module.scss'
-import Animator from '../particles/animationManager';
+import Animator from '../animation/animationManager';
 
 const Cursor = ( {} ) => {
   
